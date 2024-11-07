@@ -1,0 +1,26 @@
+# curl -X POST -F "title=Sample Book" -F "author=John Doe" -F "category=Science" -F "file=@./tests/sample.pdf" http://localhost:8080/books
+### Upload a new book with metadata and file
+POST http://localhost:8080/books
+Content-Type: multipart/form-data; boundary=asd
+
+--asd
+Content-Disposition: form-data; name="title"
+
+Sample Book
+--asd
+Content-Disposition: form-data; name="author"
+
+John Doe
+--asd
+Content-Disposition: form-data; name="category"
+
+Science
+--asd
+Content-Disposition: form-data; name="file"; filename="@./tests/sample.pdf"
+Content-Type: application/pdf
+
+--asd--
+
+# curl -X GET http://localhost:8080/books/12/download --output downloaded_sample.pdf
+### Download a book by ID
+GET http://localhost:8080/books/8/download
