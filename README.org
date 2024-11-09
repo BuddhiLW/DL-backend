@@ -6,14 +6,40 @@
 migrate create -ext=sql -dir=sql/migrations -seq init
 #+end_src
 
+** Up
 #+begin_src shell
-docker exec -it sql-postgres-1 psql -U user -d books
+ migrate -database "postgres://user:password@localhost:5151/books?sslmode=disable" -path ./sql/migrations up
 #+end_src
 
+** Down
 #+begin_src shell
 migrate -database "postgres://user:password@localhost:5151/books?sslmode=disable" -path ./sql/migrations down -all
 #+end_src
+* SQLC
+
+After adding new schema (=sql/migrations=) or queries contents (=sql/queries/=):
 
 #+begin_src shell
- migrate -database "postgres://user:password@localhost:5151/books?sslmode=disable" -path ./sql/migrations up
+sqlc generate
+#+end_src
+
+* Docker Compose
+** Up
+#+begin_src shell
+docker compose up
+#+end_src
+
+#+begin_src shell :exports output
+docker ps -al
+#+end_src
+
+#+RESULTS:
+| CONTAINER    | ID           | IMAGE                | COMMAND | CREATED | STATUS | PORTS | NAMES |         |                         |                     |                |
+| d168cf343989 | sql-postgres | docker-entrypoint.s… |      15 | minutes | ago    | Up    |    15 | minutes | 0.0.0.0:5151->5432/tcp, | [::]:5151->5432/tcp | sql-postgres-1 |
+
+** Inspect postgresql container
+
+#+begin_src shell
+docker exec -it sql-postgres-1 psql -U user -d books
+\d books
 #+end_src
