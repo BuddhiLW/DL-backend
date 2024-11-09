@@ -1,0 +1,13 @@
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: books
+    volumes:
+      - ./sql/migrations:/docker-entrypoint-initdb.d/migrations
+    ports:
+      - "5151:5432"

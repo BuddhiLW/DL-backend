@@ -1,0 +1,19 @@
+#+title: Readme
+
+* Migrate
+
+#+begin_src shell
+migrate create -ext=sql -dir=sql/migrations -seq init
+#+end_src
+
+#+begin_src shell
+docker exec -it sql-postgres-1 psql -U user -d books
+#+end_src
+
+#+begin_src shell
+migrate -database "postgres://user:password@localhost:5151/books?sslmode=disable" -path ./sql/migrations down -all
+#+end_src
+
+#+begin_src shell
+ migrate -database "postgres://user:password@localhost:5151/books?sslmode=disable" -path ./sql/migrations up
+#+end_src

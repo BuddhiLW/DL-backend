@@ -1,31 +1,38 @@
 package db
 
 import (
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+	"log"
+
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 // Book represents a book in the library.
-type Book struct {
-	ID       uint   `json:"id" gorm:"primaryKey"`
-	Title    string `json:"title"`
-	Author   string `json:"author"`
-	Category string `json:"category"`
-	Content  []byte `json:"-"` // PDF content stored as a BLOB
-}
+// type Book struct {
+// 	ID             uint   `json:"id" gorm:"primaryKey"`
+// 	Title          string `json:"title"`
+// 	Author         string `json:"author"`
+// 	Category       string `json:"category"`
+// 	Content        []byte `json:"-"` // PDF content stored as a BLOB
+// 	CoverImage     []byte `json:"-"` // Cover image stored as a BLOB
+// 	CoverImageType string `json:"-"` // MIME type for the cover image
+// }
 
-// InitDatabase initializes the SQLite database and applies migrations.
-func InitDatabase() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("library.db"), &gorm.Config{})
+// ApplyMigrations applies all pending database migrations
+func ApplyMigrations(migrationsPath, dbURL string) error {
+	m, err := migrate.New(migrationsPath, dbURL)
 	if err != nil {
-		panic("failed to connect to database")
+		log.Fatalf("Failed to initialize migrations: %v", err)
+		return err
 	}
 
-	// Apply migrations
-	err = db.AutoMigrate(&Book{})
-	if err != nil {
-		panic("failed to migrate database")
+	// Run migrations
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		log.Fatalf("Failed to apply migrations: %v", err)
+		return err
 	}
 
-	return db
+	log.Println("Migrations applied successfully.")
+	return nil
 }

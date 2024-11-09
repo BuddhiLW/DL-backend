@@ -16,11 +16,18 @@ Content-Disposition: form-data; name="category"
 
 Science
 --asd
-Content-Disposition: form-data; name="file"; filename="@./tests/sample.pdf"
+Content-Disposition: form-data; name="file"; filename="@./sample.pdf"
 Content-Type: application/pdf
+
+--asd--
+Content-Disposition: form-data; name="cover"; filename="@./cover.png"
+Content-Type: image/png
 
 --asd--
 
 # curl -X GET http://localhost:8080/books/12/download --output downloaded_sample.pdf
 ### Download a book by ID
 GET http://localhost:8080/books/8/download
+
+# curl -X GET http://localhost:8080/books/1/cover --output cover.png
+GET http://localhost:8080/books/1/cover
